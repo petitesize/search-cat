@@ -7,6 +7,7 @@ class App {
   constructor($target) {
     this.$target = $target;
 
+    // 헤더 안에 다크모드와 검색창을 넣어줄 것
     this.$header = document.createElement("header");
     this.$target.appendChild(this.$header);
 
@@ -22,6 +23,7 @@ class App {
     this.searchResult = new SearchResult({
       $target,
       initialData: this.data,
+      // 이미지 클릭 시, 모달 보이게
       onClick: (image) => {
         this.imageInfo.setState({
           visible: true,

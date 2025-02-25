@@ -60,6 +60,24 @@ body * {
   padding: 10px 15px;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 .ImageInfo {
   position: fixed;
   left: 0;
@@ -67,6 +85,14 @@ body * {
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.ImageInfo.show {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.ImageInfo.hide {
+  animation: fadeOut 0.3s ease forwards;
 }
 
 .ImageInfo .title {
@@ -87,6 +113,9 @@ body * {
   background-color: #fff;
   border: 1px solid #eee;
   border-radius: 5px;
+  @media screen and (max-width: 768px) {
+    width: 100vw;
+  }
 }
 
 .ImageInfo .content-wrapper img {

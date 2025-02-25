@@ -10,11 +10,23 @@ class ImageInfo {
 
     this.data = data;
 
+    console.log(this.data);
+
     this.render();
+    this.addEvent();
   }
 
-  setState(nextData) {
+  async setState(nextData) {
     this.data = nextData;
+    if (!this.data.visible) {
+      this.$imageInfo.style.display = "none";
+      return;
+    }
+    const catInfo = await api.fetchCatInfo(this.data.image.id);
+    if (catInfo) {
+      this.data.image.temperament = catInfo.data.temperament;
+      this.data.image.origin = catInfo.data.origin;
+    }
     this.render();
   }
 
@@ -35,8 +47,32 @@ class ImageInfo {
             </div>
           </div>`;
       this.$imageInfo.style.display = "block";
+      this.$imageInfo.classList.add("show");
+      this.$imageInfo.classList.remove("hide");
     } else {
-      this.$imageInfo.style.display = "none";
+      this.closeModal();
     }
+  }
+
+  closeModal() {
+    this.setState({ visible: false });
+    this.$imageInfo.classList.add("hide");
+    this.$imageInfo.classList.remove("show");
+  }
+
+  addEvent() {
+    this.$imageInfo.addEventListener("click", (e) => {
+      if (
+        e.target.className === "ImageInfo" ||
+        e.target.className === "close"
+      ) {
+        this.closeModal();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        this.closeModal();
+      }
+    });
   }
 }
