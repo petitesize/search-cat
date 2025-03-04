@@ -1,4 +1,4 @@
-class DarkMode {
+export default class DarkMode {
   constructor({ $target }) {
     this.$target = $target;
     this.render();

@@ -1,4 +1,4 @@
-class SearchHistory {
+export default class SearchHistory {
   // <완> 1. 검색 실행 onSearch 실행
   // <완> 2. 이 검색어를 검색어 배열에 저장
   // <완> 3. 검색이 실행될 때 render = UI 업데이트

@@ -1,13 +1,10 @@
-class SearchResult {
+export default class SearchResult {
   $searchResult = null;
   data = null;
   onClick = null;
 
   constructor({ $target, initialData, onClick }) {
-    this.$searchResult = document.createElement("section");
-    this.$searchResult.className = "SearchResult";
-    $target.appendChild(this.$searchResult);
-
+    this.$target = $target;
     initialData = JSON.parse(localStorage.getItem("lastSearch"));
     this.data = initialData;
     this.onClick = onClick;
@@ -40,14 +37,14 @@ class SearchResult {
   }
 
   render() {
-    this.$searchResult.innerHTML = "";
+    this.$target.innerHTML = "";
     this.catData = this.data;
     console.log(this.data);
     if (this.catData) {
       if (this.catData.length === 0) {
-        this.$searchResult.innerHTML = "검색 결과가 없습니다.";
+        this.$target.innerHTML = "❌ 검색 결과가 없습니다.";
       } else {
-        this.$searchResult.innerHTML = this.catData
+        this.$target.innerHTML = this.catData
           .map(
             (cat) => `
             <article class="item">
@@ -59,7 +56,7 @@ class SearchResult {
       }
     }
 
-    this.$searchResult.querySelectorAll(".item").forEach(($item, index) => {
+    this.$target.querySelectorAll(".item").forEach(($item, index) => {
       $item.addEventListener("click", () => {
         this.onClick(this.catData[index]);
       });

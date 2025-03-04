@@ -1,4 +1,6 @@
-class ImageInfo {
+import api from "./api.js";
+
+export default class ImageInfo {
   $imageInfo = null;
   data = null;
   // isLoading = false;
@@ -8,6 +10,9 @@ class ImageInfo {
     $imageInfo.className = "ImageInfo";
     this.$imageInfo = $imageInfo;
     $target.appendChild($imageInfo);
+
+    const $searchResult = document.querySelector(".SearchResult");
+    this.$searchResult = $searchResult;
 
     this.data = data;
     this.isLoading = isLoading;
@@ -22,12 +27,21 @@ class ImageInfo {
     this.data = nextData;
     if (this.data.visible) {
       this.isLoading.setState(true);
-      const catInfo = await api.fetchCatInfo(this.data.image.id);
-      if (catInfo) {
-        this.data.image.temperament = catInfo.data.temperament;
-        this.data.image.origin = catInfo.data.origin;
+      try {
+        const catInfo = await api.fetchCatInfo(this.data.image.id);
+        if (catInfo.error) {
+          this.data.image.temperament = catInfo.error;
+          this.data.image.origin = catInfo.error;
+          throw new Error(catInfo.error);
+        }
+        if (catInfo) {
+          this.data.image.temperament = catInfo.data.temperament;
+          this.data.image.origin = catInfo.data.origin;
+          this.isLoading.setState(false);
+        }
+      } catch (err) {
+        this.isLoading.setState(false);
       }
-      this.isLoading.setState(false);
     }
     this.render();
   }
@@ -35,6 +49,7 @@ class ImageInfo {
   render() {
     if (this.data.visible) {
       const { name, url, temperament, origin } = this.data.image;
+      console.log(temperament);
 
       this.$imageInfo.innerHTML = `
           <div class="content-wrapper">

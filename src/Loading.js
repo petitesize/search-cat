@@ -1,5 +1,4 @@
-//필수 데이터를 불러오는 중일 때, 현재 데이터를 불러오는 중임을 유저에게 알리는 UI를 추가해야 합니다.
-class Loading {
+export default class Loading {
   constructor({ $target }) {
     this.$target = $target;
     this.render();

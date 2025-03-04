@@ -1,6 +1,7 @@
-const TEMPLATE = '<input type="text">';
+// const TEMPLATE = '<input type="text">';
+import SearchHistory from "./SearchHistory.js";
 
-class SearchInput {
+export default class SearchInput {
   constructor({ $target, onSearch, onRandom }) {
     const fragment = document.createDocumentFragment();
     this.onRandom = onRandom;

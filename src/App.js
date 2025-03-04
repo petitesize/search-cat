@@ -1,6 +1,13 @@
+import SearchInput from "./SearchInput.js";
+import SearchResult from "./SearchResult.js";
+import DarkMode from "./DarkMode.js";
+import Loading from "./Loading.js";
+import api from "./api.js";
+import ImageInfo from "./ImageInfo.js";
+
 console.log("app is running!");
 
-class App {
+export default class App {
   $target = null;
   data = null;
   isLoading = false;
@@ -20,20 +27,17 @@ class App {
         this.setState({ isLoading: true });
         try {
           const res = await api.fetchCats(keyword);
-          if (!res.ok) {
-            if (res.status === 500) {
-              this.setState({ isLoading: false });
-              throw new Error(
-                "서버에서 오류가 발생했습니다. 다시 시도해주세요"
-              );
-            }
+
+          if (res.error) {
+            this.$searchResult.innerHTML = res.error;
+            throw new Error(res.error);
           }
+
           if (res.data) {
             this.setState({ data: res.data, isLoading: false });
             localStorage.setItem("lastSearch", JSON.stringify(res.data));
           }
         } catch (err) {
-          console.error(err);
           this.setState({ isLoading: false });
         }
       },
@@ -41,28 +45,29 @@ class App {
         this.setState({ isLoading: true });
         try {
           const res = await api.fetchCatInfo("random50");
-          if (!res.ok) {
-            if (res.status === 500) {
-              this.setState({ isLoading: false });
-              throw new Error(
-                "서버에서 오류가 발생했습니다. 다시 시도해주세요"
-              );
-            }
+
+          if (res.error) {
+            this.$searchResult.innerHTML = res.error;
+            throw new Error(res.error);
           }
           if (res.data) {
             this.setState({ data: res.data, isLoading: false });
             localStorage.setItem("lastSearch", JSON.stringify(res.data));
           }
         } catch (err) {
-          console.error(err);
           this.setState({ isLoading: false });
         }
       },
     });
 
     this.loading = new Loading({ $target });
+
+    this.$searchResult = document.createElement("section");
+    this.$searchResult.className = "SearchResult";
+    this.$target.appendChild(this.$searchResult);
+
     this.searchResult = new SearchResult({
-      $target,
+      $target: this.$searchResult,
       initialData: this.data,
       // 이미지 클릭 시, 모달 보이게
       onClick: (image) => {
