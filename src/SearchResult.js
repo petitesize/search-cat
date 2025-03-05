@@ -4,7 +4,7 @@ export default class SearchResult {
   onClick = null;
 
   constructor({ $target, initialData, onClick }) {
-    this.$target = $target;
+    this.$target = $target; // 검색결과 section el
     this.data = JSON.parse(localStorage.getItem("lastSearch")) || initialData;
     this.onClick = onClick;
 
@@ -46,10 +46,22 @@ export default class SearchResult {
   }
 
   addEvent() {
-    this.$target.querySelectorAll(".item").forEach(($item, index) => {
-      $item.addEventListener("click", () => {
+    // Event Delegation 기법 사용하기
+    // 1. 부모 요소에 클릭 이벤트 등록
+    this.$target.addEventListener("click", (e) => {
+      // 2. 클릭한 지점에서 가장 가까운 item 찾기
+      const $item = e.target.closest(".item");
+      if (!$item) return; // item 없으면 return
+
+      // 3. querySelectorAll 반환값은 유사배열
+      // => Array.from() 사용하여 배열로 만들어줌
+      // => 모든 item 중에 선택된 $item el의 index 가져옴
+      const index = Array.from(this.$target.querySelectorAll(".item")).indexOf(
+        $item
+      );
+      if (index !== -1) {
         this.onClick(this.data[index]);
-      });
+      }
     });
   }
 
