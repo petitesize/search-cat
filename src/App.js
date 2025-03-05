@@ -35,6 +35,7 @@ export default class App {
 
           if (res.data) {
             this.setState({ data: res.data, isLoading: false });
+            // 마지막 검색 결과 로컬스토리지에 저장
             localStorage.setItem("lastSearch", JSON.stringify(res.data));
           }
         } catch (err) {
