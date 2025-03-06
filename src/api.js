@@ -29,6 +29,20 @@ const api = {
       return { data: [], error: err.message };
     }
   },
+
+  fetchRandomCats: async () => {
+    try {
+      const res = await fetch(`${API_ENDPOINT}/api/cats/random50`);
+      if (!res.ok) {
+        throw new Error(getErrorMsg(res.status));
+      }
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      console.error("Error fetching random cats:", err.message);
+      return { data: [], error: err.message };
+    }
+  },
 };
 
 const getErrorMsg = (status) => {
