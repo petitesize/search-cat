@@ -6,21 +6,24 @@ export default class ImageInfo {
   // isLoading = false;
 
   constructor({ $target, data, isLoading }) {
-    const $imageInfo = document.createElement("div");
-    $imageInfo.className = "ImageInfo";
-    this.$imageInfo = $imageInfo;
-    $target.appendChild($imageInfo);
-
+    this.$target = $target;
     const $searchResult = document.querySelector(".SearchResult");
     this.$searchResult = $searchResult;
 
     this.data = data;
     this.isLoading = isLoading;
 
-    console.log(this.data);
-
+    this.setImageInfo();
     this.render();
     this.addEvent();
+  }
+
+  // 모달창 레이아웃 생성
+  setImageInfo() {
+    const $imageInfo = document.createElement("div");
+    $imageInfo.className = "ImageInfo";
+    this.$imageInfo = $imageInfo;
+    this.$target.appendChild($imageInfo);
   }
 
   async setState(nextData) {
@@ -46,10 +49,10 @@ export default class ImageInfo {
     this.render();
   }
 
+  // 모달창 안의 내용을 렌더링
   render() {
     if (this.data.visible) {
       const { name, url, temperament, origin } = this.data.image;
-      console.log(temperament);
 
       this.$imageInfo.innerHTML = `
           <div class="content-wrapper">
@@ -63,6 +66,14 @@ export default class ImageInfo {
               <div>태생: ${origin}</div>
             </div>
           </div>`;
+      this.handleImageShow(true);
+    } else {
+      this.handleImageShow(false);
+    }
+  }
+
+  handleImageShow(show = false) {
+    if (show) {
       this.$imageInfo.style.display = "block";
       this.$imageInfo.classList.add("show");
       this.$imageInfo.classList.remove("hide");

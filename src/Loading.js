@@ -34,15 +34,11 @@ export default class Loading {
 
   setState(isLoading) {
     if (isLoading) {
+      this.$loadingSpinner.style.display = "block";
       this.$loadingOverlay.style.display = "flex"; // 오버레이 활성화
     } else {
-      this.$loadingOverlay.style.display = "none"; // 오버레이 숨기기
-    }
-
-    if (isLoading) {
-      this.$loadingSpinner.style.display = "block";
-    } else {
       this.$loadingSpinner.style.display = "none";
+      this.$loadingOverlay.style.display = "none"; // 오버레이 숨기기
     }
   }
 }

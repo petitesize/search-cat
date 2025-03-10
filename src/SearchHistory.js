@@ -5,11 +5,15 @@ export default class SearchHistory {
     this.keywordsHistory = localStorage.getItem("searchKeywords")
       ? localStorage.getItem("searchKeywords").split(",")
       : [];
+
+    this.setLayout();
+    this.render();
+  }
+
+  setLayout() {
     this.$searchKewordContainer = document.createElement("div");
     this.$searchKewordContainer.className = "history-wrapper";
-    this.$searchInput = document.querySelector(".SearchInput");
     this.$target.appendChild(this.$searchKewordContainer);
-    this.render();
   }
 
   render() {

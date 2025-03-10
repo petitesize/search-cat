@@ -84,6 +84,7 @@ body * {
   top: 0;
   width: 100vw;
   height: 100vh;
+
   background-color: rgba(0, 0, 0, 0.5);
 }
 
@@ -113,6 +114,8 @@ body * {
   background-color: #fff;
   border: 1px solid #eee;
   border-radius: 5px;
+  max-height: 100vh; /* 🔹최대 높이를 화면의 80%로 설정 */
+  overflow-y: auto; /* 🔹스크롤 가능하게 설정 */
   @media screen and (max-width: 768px) {
     width: 100vw;
   }
