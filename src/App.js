@@ -7,7 +7,7 @@ import RandomBanner from "./RandomBanner.js";
 
 console.log("app is running!");
 
-const ERROR_MSG = (msg) => `<div class="result-msg"><p>${msg}</p></div>`;
+export const ERROR_MSG = (msg) => `<div class="result-msg"><p>${msg}</p></div>`;
 
 export default class App {
   $target = null;
@@ -55,19 +55,14 @@ export default class App {
     try {
       const res = await api.fetchRandomCats();
 
-      if (res.error) {
-        document.querySelector(".BannerWrapper").innerHTML = ERROR_MSG(
-          "배너 이미지 요청 중 오류가 발생하였습니다."
-        );
-        throw new Error(res.error);
-      }
+      this.bannerData = res.data;
+      this.banner = new RandomBanner({
+        $target: this.$bannerWrapper,
+        data: this.bannerData,
+      });
 
-      if (res.data) {
-        this.bannerData = res.data;
-        this.banner = new RandomBanner({
-          $target: this.$bannerWrapper,
-          data: this.bannerData,
-        });
+      if (res.error) {
+        this.banner.setError("배너 이미지 요청 중 오류가 발생하였습니다.");
       }
     } catch (err) {
       console.error(err);

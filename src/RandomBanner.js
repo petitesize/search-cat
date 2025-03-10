@@ -1,3 +1,5 @@
+import { ERROR_MSG } from "./App.js";
+
 export default class RandomBanner {
   constructor({ $target, data }) {
     this.$target = $target;
@@ -5,16 +7,25 @@ export default class RandomBanner {
     this.currentIndex = 0;
     this.totalPages = 5;
 
-    if (this.data) {
-      this.render();
-    }
+    this.render();
 
     this.setBannerImg();
     this.updateButtonState();
     this.addEvent();
   }
 
+  setError(message) {
+    this.data = [];
+    this.errorMessage = message;
+    this.render();
+  }
+
   render() {
+    if (this.errorMessage) {
+      this.$target.innerHTML = ERROR_MSG(this.errorMessage);
+      return;
+    }
+
     // 배너 전체 감싸는 컨테이너
     this.$bannerContainer = document.createElement("div");
     this.$bannerContainer.className = "banner-container";
