@@ -50,7 +50,7 @@ export default class SearchInput {
 
   addEvent() {
     this.$searchInput.addEventListener("keyup", (e) => {
-      if (e.keyCode === 13) {
+      if (e.keyCode === 13 && e.target.value) {
         this.onSearch(e.target.value);
         this.searchHistory.addHistory(e.target.value);
       }

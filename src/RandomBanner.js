@@ -3,18 +3,18 @@ export default class RandomBanner {
     this.$target = $target;
     this.data = data;
     this.currentIndex = 0;
-    this.itemsPerPage = 5;
-    this.totalPages = 10;
+    this.totalPages = 5;
 
-    this.render();
+    if (this.data) {
+      this.render();
+    }
+
     this.setBannerImg();
     this.updateButtonState();
     this.addEvent();
   }
 
   render() {
-    const $bannerWrapper = document.querySelector(".BannerWrapper");
-
     // 배너 전체 감싸는 컨테이너
     this.$bannerContainer = document.createElement("div");
     this.$bannerContainer.className = "banner-container";
@@ -29,22 +29,26 @@ export default class RandomBanner {
     this.$nextBtn.innerHTML = ">";
 
     // 구조 변경: 화살표를 감싸는 컨테이너에 배너 추가
-    $bannerWrapper.appendChild(this.$prevBtn);
+
+    this.$target.appendChild(this.$prevBtn);
     this.$bannerContainer.appendChild(this.$bannerInner);
-    $bannerWrapper.appendChild(this.$bannerContainer);
-    $bannerWrapper.appendChild(this.$nextBtn);
+    this.$target.appendChild(this.$bannerContainer);
+    this.$target.appendChild(this.$nextBtn);
   }
 
   setBannerImg() {
-    this.$bannerInner.innerHTML = this.data
-      .map(
-        (cat) => `
+    if (this.data) {
+      this.$bannerInner.innerHTML = this.data
+        .slice(0, 5)
+        .map(
+          (cat) => `
           <div class="banner-item">
              <img class="lazy-img" title="${cat.name}" src="${cat.url}" alt="${cat.name}" />
           </div>
         `
-      )
-      .join("");
+        )
+        .join("");
+    }
 
     // 배너 전체의 가로 길이를 페이지 개수에 맞게 조정
     this.$bannerInner.style.width = `${this.totalPages * 100}%`;

@@ -4,13 +4,11 @@ import SearchInput from "./SearchInput.js";
 export default class Header {
   constructor({ $target, onSearch, onRandom }) {
     this.$target = $target;
-    this.$header = document.createElement("header");
-    this.$target.appendChild(this.$header);
 
-    this.darkMode = new DarkMode({ $target: this.$header });
+    this.darkMode = new DarkMode({ $target: this.$target });
 
     this.searchInput = new SearchInput({
-      $target: this.$header,
+      $target: this.$target,
       onSearch,
       onRandom,
     });

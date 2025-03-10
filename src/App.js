@@ -7,6 +7,8 @@ import RandomBanner from "./RandomBanner.js";
 
 console.log("app is running!");
 
+const ERROR_MSG = (msg) => `<div class="result-msg"><p>${msg}</p></div>`;
+
 export default class App {
   $target = null;
   data = null;
@@ -15,57 +17,68 @@ export default class App {
 
   constructor($target) {
     this.$target = $target;
+    this.setupLayout();
 
-    // 헤더 안에 다크모드와 검색창을 넣어줄 것
-
-    this.$header = new Header({
-      $target,
-      onSearch: async (keyword) => {
-        this.setState({ isLoading: true });
-        try {
-          const res = await api.fetchCats(keyword);
-
-          if (res.error) {
-            this.$searchResult.innerHTML = res.error;
-            throw new Error(res.error);
-          }
-
-          if (res.data) {
-            this.setState({ data: res.data, isLoading: false });
-            // 마지막 검색 결과 로컬스토리지에 저장
-            localStorage.setItem("lastSearch", JSON.stringify(res.data));
-          }
-        } catch (err) {
-          this.setState({ isLoading: false });
-        }
-      },
-      onRandom: async () => {
-        this.setState({ isLoading: true });
-        try {
-          const res = await api.fetchRandomCats();
-
-          if (res.error) {
-            this.$searchResult.innerHTML = res.error;
-            throw new Error(res.error);
-          }
-          if (res.data) {
-            this.setState({ data: res.data, isLoading: false });
-            localStorage.setItem("lastSearch", JSON.stringify(res.data));
-          }
-        } catch (err) {
-          this.setState({ isLoading: false });
-        }
-      },
-    });
-
+    this.setupHeader();
     this.loading = new Loading({ $target });
+    this.setupBanner();
 
-    this.init();
+    this.setImageInfo();
+  }
+
+  // 기본 레이아웃 틀
+  setupLayout() {
+    this.$header = document.createElement("header");
+    this.$target.appendChild(this.$header);
+
+    // 섹션 레이아웃을 잡아줌
+    this.$bannerWrapper = document.createElement("section");
+    this.$bannerWrapper.className = "BannerWrapper";
+    this.$target.appendChild(this.$bannerWrapper);
 
     this.$searchResult = document.createElement("section");
     this.$searchResult.className = "SearchResult";
     this.$target.appendChild(this.$searchResult);
+  }
 
+  setupHeader() {
+    // 헤더 안에 다크모드와 검색창을 넣어줄 것
+    this.$header = new Header({
+      $target: this.$header,
+      onSearch: (keyword) => this.fetchData(api.fetchCats, keyword),
+      onRandom: () => this.fetchData(api.fetchRandomCats),
+    });
+  }
+
+  async setupBanner() {
+    this.setState({ isLoading: true });
+    try {
+      const res = await api.fetchRandomCats();
+
+      if (res.error) {
+        document.querySelector(".BannerWrapper").innerHTML = ERROR_MSG(
+          "배너 이미지 요청 중 오류가 발생하였습니다."
+        );
+        throw new Error(res.error);
+      }
+
+      if (res.data) {
+        this.bannerData = res.data;
+        this.banner = new RandomBanner({
+          $target: this.$bannerWrapper,
+          data: this.bannerData,
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      this.setState({ isLoading: false });
+    }
+
+    this.setSearchResult();
+  }
+
+  setSearchResult() {
     this.searchResult = new SearchResult({
       $target: this.$searchResult,
       initialData: this.data,
@@ -77,9 +90,11 @@ export default class App {
         });
       },
     });
+  }
 
+  setImageInfo() {
     this.imageInfo = new ImageInfo({
-      $target,
+      $target: this.$target,
       data: {
         visible: false,
         image: null,
@@ -88,8 +103,31 @@ export default class App {
     });
   }
 
+  fetchData = async (apiCall, keyword = "") => {
+    this.setState({ isLoading: true });
+    try {
+      // 키워드가 있으면 넣어서 검색, 없으면 x
+      // 빈문자열 false 처리됨
+      const res = keyword ? await apiCall(keyword) : await apiCall();
+
+      if (res.error) {
+        document.querySelector(".SearchResult").innerHTML = ERROR_MSG(
+          res.error
+        );
+        throw new Error(res.error);
+      }
+
+      if (res.data) {
+        this.setState({ data: res.data, isLoading: false });
+        // 마지막 검색 결과 로컬스토리지에 저장
+        localStorage.setItem("lastSearch", JSON.stringify(res.data));
+      }
+    } catch (err) {
+      this.setState({ isLoading: false });
+    }
+  };
+
   setState(nextData) {
-    console.log(this);
     // 로딩, 데이터를 구분해서 업데이트
     if (nextData.data !== undefined) {
       this.data = nextData.data;
@@ -100,30 +138,5 @@ export default class App {
       this.isLoading = nextData.isLoading;
       this.loading.setState(this.isLoading);
     }
-  }
-
-  async init() {
-    const $section = document.createElement("section");
-    $section.className = "BannerWrapper";
-    this.$target.appendChild($section);
-    this.loading.setState(true);
-    try {
-      const res = await api.fetchRandomCats();
-
-      if (res.error) {
-        this.$searchResult.innerHTML = res.error;
-        throw new Error(res.error);
-      }
-      if (res.data) {
-        this.loading.setState(false);
-        this.bannerData = res.data;
-      }
-    } catch (err) {
-      this.loading.setState(false);
-    }
-    this.banner = new RandomBanner({
-      $target: this.$header,
-      data: this.bannerData,
-    });
   }
 }

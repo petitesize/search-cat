@@ -1,10 +1,10 @@
 export default class SearchResult {
-  $searchResult = null;
   data = null;
   onClick = null;
 
   constructor({ $target, initialData, onClick }) {
-    this.$target = $target; // 검색결과 section el
+    this.$target = $target;
+
     this.data = JSON.parse(localStorage.getItem("lastSearch")) || initialData;
     this.onClick = onClick;
 
@@ -68,7 +68,7 @@ export default class SearchResult {
   render() {
     if (this.data) {
       if (this.data.length === 0) {
-        this.$target.innerHTML = "❌ 검색 결과가 없습니다.";
+        this.$target.innerHTML = `<div class="result-msg"><p>❌ 검색 결과가 없습니다.</p></div>`;
       } else {
         this.$target.innerHTML = this.data
           .map(
