@@ -52,6 +52,7 @@ body * {
   display: inline-block;
   margin: 0 0 1em;
   width: 100%;
+  cursor: pointer;
 }
 
 .SearchInput {
@@ -244,6 +245,7 @@ body * {
   margin: 1em auto;
   width: 80%;
   min-width: 500px;
+  min-height: 380px;
 }
 
 .BannerWrapper button {

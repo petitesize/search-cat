@@ -41,34 +41,51 @@ export default class App {
     this.$target.appendChild(this.$searchResult);
   }
 
+  setLocalStorage(data) {
+    this.setState({ data });
+    // // 마지막 검색 결과 로컬스토리지에 저장
+    localStorage.setItem("lastSearch", JSON.stringify(data));
+  }
+
   setupHeader() {
     // 헤더 안에 다크모드와 검색창을 넣어줄 것
     this.$header = new Header({
       $target: this.$header,
-      onSearch: (keyword) => this.fetchData(api.fetchCats, keyword),
-      onRandom: () => this.fetchData(api.fetchRandomCats),
+      onSearch: (keyword) =>
+        this.fetchData(
+          api.fetchCats,
+          keyword,
+          (data) => this.setLocalStorage(data),
+          (err) => (this.$searchResult.innerHTML = ERROR_MSG(err))
+        ),
+
+      onRandom: () =>
+        this.fetchData(
+          api.fetchRandomCats,
+          "",
+          (data) => this.setLocalStorage(data),
+          (err) => (this.$searchResult.innerHTML = ERROR_MSG(err))
+        ),
     });
   }
 
   async setupBanner() {
-    this.setState({ isLoading: true });
-    try {
-      const res = await api.fetchRandomCats();
-
-      this.bannerData = res.data;
-      this.banner = new RandomBanner({
-        $target: this.$bannerWrapper,
-        data: this.bannerData,
-      });
-
-      if (res.error) {
-        this.banner.setError("배너 이미지 요청 중 오류가 발생하였습니다.");
+    this.fetchData(
+      api.fetchRandomCats,
+      "",
+      (data) => {
+        this.bannerData = data;
+        this.banner = new RandomBanner({
+          $target: this.$bannerWrapper,
+          data: this.bannerData,
+        });
+      },
+      (error) => {
+        this.$bannerWrapper.innerHTML = ERROR_MSG(
+          "배너 이미지 요청 중 오류가 발생하였습니다."
+        );
       }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      this.setState({ isLoading: false });
-    }
+    );
 
     this.setSearchResult();
   }
@@ -98,7 +115,7 @@ export default class App {
     });
   }
 
-  fetchData = async (apiCall, keyword = "") => {
+  fetchData = async (apiCall, keyword = "", onSuccess, onError) => {
     this.setState({ isLoading: true });
     try {
       // 키워드가 있으면 넣어서 검색, 없으면 x
@@ -106,18 +123,16 @@ export default class App {
       const res = keyword ? await apiCall(keyword) : await apiCall();
 
       if (res.error) {
-        document.querySelector(".SearchResult").innerHTML = ERROR_MSG(
-          res.error
-        );
+        if (onError) onError(res.error);
         throw new Error(res.error);
       }
 
       if (res.data) {
-        this.setState({ data: res.data, isLoading: false });
-        // 마지막 검색 결과 로컬스토리지에 저장
-        localStorage.setItem("lastSearch", JSON.stringify(res.data));
+        if (onSuccess) onSuccess(res.data);
       }
     } catch (err) {
+      this.setState({ isLoading: false });
+    } finally {
       this.setState({ isLoading: false });
     }
   };
