@@ -2,47 +2,23 @@ const API_ENDPOINT =
   "https://q9d70f82kd.execute-api.ap-northeast-2.amazonaws.com/dev";
 
 const api = {
-  fetchCats: async (keyword) => {
-    try {
-      const res = await fetch(`${API_ENDPOINT}/api/cats/search?q=${keyword}`);
-      if (!res.ok) {
-        throw new Error(getErrorMsg(res.status));
-      }
-      const data = await res.json();
-      return data;
-    } catch (err) {
-      console.error("Error fetching cats:", err.message);
-      return { data: [], error: err.message };
-    }
-  },
+  fetchCats: (keyword) => request(`search?q=${keyword}`),
+  fetchCatInfo: (id) => request(`${id}`),
+  fetchRandomCats: () => request("random50"),
+};
 
-  fetchCatInfo: async (id) => {
-    try {
-      const res = await fetch(`${API_ENDPOINT}/api/cats/${id}`);
-      if (!res.ok) {
-        throw new Error(getErrorMsg(res.status));
-      }
-      const data = await res.json();
-      return data;
-    } catch (err) {
-      console.error("Error fetching cat info:", err.message);
-      return { data: [], error: err.message };
+const request = async (url) => {
+  try {
+    const res = await fetch(`${API_ENDPOINT}/api/cats/${url}`);
+    if (!res.ok) {
+      throw new Error(getErrorMsg(res.status));
     }
-  },
-
-  fetchRandomCats: async () => {
-    try {
-      const res = await fetch(`${API_ENDPOINT}/api/cats/random50`);
-      if (!res.ok) {
-        throw new Error(getErrorMsg(res.status));
-      }
-      const data = await res.json();
-      return data;
-    } catch (err) {
-      console.error("Error fetching random cats:", err.message);
-      return { data: [], error: err.message };
-    }
-  },
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("Error fetching data: ", err.message);
+    return { data: [], error: err.message };
+  }
 };
 
 const getErrorMsg = (status) => {

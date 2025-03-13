@@ -7,7 +7,7 @@ import RandomBanner from "./RandomBanner.js";
 
 console.log("app is running!");
 
-export const ERROR_MSG = (msg) => `<div class="result-msg"><p>${msg}</p></div>`;
+const ERROR_MSG = (msg) => `<div class="result-msg"><p>${msg}</p></div>`;
 
 export default class App {
   $target = null;
@@ -41,7 +41,7 @@ export default class App {
     this.$target.appendChild(this.$searchResult);
   }
 
-  setLocalStorage(data) {
+  setFetchedData(data) {
     this.setState({ data });
     // // 마지막 검색 결과 로컬스토리지에 저장
     localStorage.setItem("lastSearch", JSON.stringify(data));
@@ -55,15 +55,14 @@ export default class App {
         this.fetchData(
           api.fetchCats,
           keyword,
-          (data) => this.setLocalStorage(data),
+          (data) => this.setFetchedData(data),
           (err) => (this.$searchResult.innerHTML = ERROR_MSG(err))
         ),
-
       onRandom: () =>
         this.fetchData(
           api.fetchRandomCats,
           "",
-          (data) => this.setLocalStorage(data),
+          (data) => this.setFetchedData(data),
           (err) => (this.$searchResult.innerHTML = ERROR_MSG(err))
         ),
     });

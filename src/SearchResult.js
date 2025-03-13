@@ -63,7 +63,22 @@ export default class SearchResult {
         this.onClick(this.data[index]);
       }
     });
+
+    // window.addEventListener("scroll", this.applyLazyLoad);
   }
+
+  // 💡 Lazy Load 적용 방법 2
+  // applyLazyLoad() {
+  //   document.querySelectorAll(".lazy-img").forEach((img) => {
+  //     if (
+  //       img.dataset.src &&
+  //       img.getBoundingClientRect().top < window.innerHeight
+  //     ) {
+  //       img.src = img.dataset.src;
+  //       img.removeAttribute("data-src");
+  //     }
+  //   });
+  // }
 
   render() {
     if (this.data) {
@@ -81,7 +96,7 @@ export default class SearchResult {
           .join("");
       }
     }
-
+    // this.applyLazyLoad();
     this.observeImgs();
     this.addEvent();
   }

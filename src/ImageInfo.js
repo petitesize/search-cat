@@ -3,7 +3,6 @@ import api from "./api.js";
 export default class ImageInfo {
   $imageInfo = null;
   data = null;
-  // isLoading = false;
 
   constructor({ $target, data, isLoading }) {
     this.$target = $target;

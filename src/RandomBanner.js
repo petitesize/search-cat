@@ -1,5 +1,3 @@
-import { ERROR_MSG } from "./App.js";
-
 export default class RandomBanner {
   constructor({ $target, data }) {
     this.$target = $target;
